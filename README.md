@@ -20,8 +20,9 @@ A small **Python** sample: it calls the public **[DummyJSON](https://dummyjson.c
 | `services/post_service.py` | Workflows: fetch → parse → persist via `Storage` |
 | `models/post.py`, `models/comment.py` | `Post` and `Comment` models (comment includes nested author) |
 | `storage.py` | `Storage` protocol and `InMemoryStorage` implementation |
+| `tests/` | Pytest suite (storage, models, `PostService`, `DummyClient` with `MockTransport`) |
 
-Run commands from the **repository root** so `clients`, `services`, and `models` resolve on `PYTHONPATH`.
+Run commands from the **repository root** so `clients`, `services`, and `models` resolve on `PYTHONPATH` (see `pytest.ini` → `pythonpath = .`).
 
 ## Requirements
 
@@ -40,6 +41,25 @@ python3 main.py
 
 You should see `Stored posts:` and `Stored comments:` on **stdout** (dict-like maps: keys are ids, values are model instances). Failed requests print to **stderr**.
 
+## Tests
+
+Install dev dependencies (includes **pytest**, **pytest-asyncio**, and the app requirements from `requirements.txt`):
+
+```bash
+cd /path/to/dummy-api-test
+source .venv/bin/activate   # if you use a venv
+pip install -r requirements-dev.txt
+```
+
+Run the full suite from the repo root:
+
+```bash
+python3 -m pytest tests/ 
+```
+
+Use `python3 -m pytest tests/ -v` for per-test names, or `python3 -m pytest tests/test_storage.py` to run a single file.
+
 ## Dependencies
 
-See `requirements.txt` (main library: **httpx**).
+- **Runtime:** `requirements.txt` (main library: **httpx**).
+- **Development / tests:** `requirements-dev.txt` (adds **pytest** and **pytest-asyncio**).
