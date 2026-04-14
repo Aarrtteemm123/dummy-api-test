@@ -10,6 +10,7 @@ from storage import InMemoryStorage
 
 async def main() -> None:
     try:
+        # Context manager ensures the underlying httpx client is closed even on errors.
         async with DummyClient() as client:
             storage = InMemoryStorage()
             service = PostService(client, storage)
@@ -19,11 +20,13 @@ async def main() -> None:
             await service.fetch_and_store_comments(2)
             print("Stored posts:", storage.list_collection("posts"))
             print("Stored comments:", storage.list_collection("comments"))
+    # 4xx/5xx after raise_for_status() on the client.
     except httpx.HTTPStatusError as exc:
         print(
             f"HTTP {exc.response.status_code} for {exc.request.url!r}",
             file=sys.stderr,
         )
+    # Transport-level failures (DNS, timeout, connection reset, etc.).
     except httpx.RequestError as exc:
         print(f"RequestError: {exc}", file=sys.stderr)
     except Exception as exc:

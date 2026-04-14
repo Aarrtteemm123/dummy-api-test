@@ -24,6 +24,7 @@ class Comment:
             id=int(data["id"]),
             body=str(data["body"]),
             postId=int(data["postId"]),
+            # API may omit likes on some payloads; default keeps the model usable.
             likes=int(data.get("likes", 0)),
             user=CommentUser(
                 id=int(u["id"]),

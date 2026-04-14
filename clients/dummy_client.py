@@ -3,6 +3,7 @@ from typing import Any, Protocol
 import httpx
 
 
+# PostService depends on this interface, not on DummyClient specifically (easier to test/swap).
 class ApiClient(Protocol):
     async def get_post(self, post_id: int) -> dict[str, Any]: ...
 
@@ -33,11 +34,13 @@ class DummyClient:
     async def search_posts(self, query: str) -> list[dict[str, Any]]:
         r = await self._client.get("/posts/search", params={"q": query})
         r.raise_for_status()
+        # DummyJSON wraps results: { "posts": [...], "total", "skip", "limit" }.
         return r.json()["posts"]
 
     async def get_comments(self, post_id: int) -> list[dict[str, Any]]:
         r = await self._client.get(f"/posts/{post_id}/comments")
         r.raise_for_status()
+        # Envelope: { "comments": [...], "total", "skip", "limit" }.
         return r.json()["comments"]
 
     async def close(self):
