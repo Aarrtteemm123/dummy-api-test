@@ -1,7 +1,7 @@
 from dataclasses import asdict
-from typing import Any
 
 from clients.dummy_client import ApiClient
+from models.comment import Comment
 from models.post import Post
 from storage import Storage
 
@@ -29,8 +29,11 @@ class PostService:
             result.append(post)
         return result
 
-    async def fetch_and_store_comments(self, post_id: int) -> list[dict[str, Any]]:
-        comments = await self._client.get_comments(post_id)
-        for comment in comments:
-            self._storage.create(PostService.COMMENTS, comment["id"], comment)
-        return comments
+    async def fetch_and_store_comments(self, post_id: int) -> list[Comment]:
+        raw_comments = await self._client.get_comments(post_id)
+        result: list[Comment] = []
+        for raw in raw_comments:
+            comment = Comment.from_data(raw)
+            self._storage.create(PostService.COMMENTS, comment.id, asdict(comment))
+            result.append(comment)
+        return result
