@@ -1,4 +1,16 @@
-from typing import Any, Dict
+from typing import Any, Dict, Protocol
+
+
+class Storage(Protocol):
+    def create(self, collection: str, key: Any, value: Any) -> None: ...
+
+    def read(self, collection: str, key: Any) -> Any: ...
+
+    def update(self, collection: str, key: Any, value: Any) -> None: ...
+
+    def delete(self, collection: str, key: Any) -> None: ...
+
+    def list_collection(self, collection: str) -> Dict[Any, Any]: ...
 
 
 class InMemoryStorage:
@@ -21,4 +33,4 @@ class InMemoryStorage:
             del self._db[collection][key]
 
     def list_collection(self, collection: str) -> Dict[Any, Any]:
-        return self._db.get(collection, {})
+        return dict(self._db.get(collection, {}))
