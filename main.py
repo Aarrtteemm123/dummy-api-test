@@ -1,7 +1,7 @@
 import asyncio
-from dummy_client import DummyClient
+from clients.dummy_client import DummyClient
 from storage import InMemoryStorage
-from post_service import PostService
+from services.post_service import PostService
 
 
 async def main():

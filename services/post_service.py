@@ -1,6 +1,6 @@
 from typing import Any
 
-from dummy_client import ApiClient
+from clients.dummy_client import ApiClient
 from storage import Storage
 
 POSTS = "posts"
