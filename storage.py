@@ -1,8 +1,13 @@
+from collections.abc import Iterable
 from typing import Any, Dict, Protocol
 
 
 class Storage(Protocol):
     def create(self, collection: str, key: Any, value: Any) -> None: ...
+
+    def create_many(
+        self, collection: str, pairs: Iterable[tuple[Any, Any]]
+    ) -> None: ...
 
     def read(self, collection: str, key: Any) -> Any: ...
 
@@ -20,6 +25,13 @@ class InMemoryStorage:
     def create(self, collection: str, key: Any, value: Any) -> None:
         self._db.setdefault(collection, {})
         self._db[collection][key] = value
+
+    def create_many(
+        self, collection: str, pairs: Iterable[tuple[Any, Any]]
+    ) -> None:
+        bucket = self._db.setdefault(collection, {})
+        for key, value in pairs:
+            bucket[key] = value
 
     def read(self, collection: str, key: Any) -> Any:
         return self._db.get(collection, {}).get(key)
