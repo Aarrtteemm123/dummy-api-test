@@ -1,14 +1,14 @@
-from clients.dummy_client import ApiClient
 from models.comment import Comment
 from models.post import Post
-from storage import Storage
+from protocols.api_client_protocol import ApiClientProtocol
+from protocols.storage_protocol import StorageProtocol
 
 
 class PostService:
     POSTS = "posts"
     COMMENTS = "comments"
 
-    def __init__(self, client: ApiClient, storage: Storage) -> None:
+    def __init__(self, client: ApiClientProtocol, storage: StorageProtocol) -> None:
         self._client = client
         self._storage = storage
 

@@ -1,22 +1,5 @@
 from collections.abc import Iterable
-from typing import Any, Dict, Protocol
-
-
-# Structural contract: any object with these methods is acceptable (duck typing).
-class Storage(Protocol):
-    def create(self, collection: str, key: Any, value: Any) -> None: ...
-
-    def create_many(
-        self, collection: str, pairs: Iterable[tuple[Any, Any]]
-    ) -> None: ...
-
-    def read(self, collection: str, key: Any) -> Any: ...
-
-    def update(self, collection: str, key: Any, value: Any) -> None: ...
-
-    def delete(self, collection: str, key: Any) -> None: ...
-
-    def list_collection(self, collection: str) -> Dict[Any, Any]: ...
+from typing import Any, Dict
 
 
 class InMemoryStorage:
