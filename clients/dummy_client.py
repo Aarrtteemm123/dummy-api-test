@@ -17,8 +17,18 @@ class ApiClient(Protocol):
 class DummyClient:
     BASE_URL = "https://dummyjson.com"
 
-    def __init__(self, timeout: float = 10.0):
-        self._client = httpx.AsyncClient(base_url=self.BASE_URL, timeout=timeout)
+    def __init__(
+        self,
+        timeout: float = 10.0,
+        transport: httpx.BaseTransport | None = None,
+    ):
+        client_kw: dict[str, object] = {
+            "base_url": self.BASE_URL,
+            "timeout": timeout,
+        }
+        if transport is not None:
+            client_kw["transport"] = transport
+        self._client = httpx.AsyncClient(**client_kw)
 
     async def __aenter__(self) -> "DummyClient":
         return self
