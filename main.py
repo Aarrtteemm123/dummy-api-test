@@ -4,7 +4,8 @@ import logging
 import httpx
 
 from clients.dummy_client import DummyClient
-from services.post_service import PostLoaderService, PostStorageService
+from services.post_loader_service import PostLoaderService
+from services.post_storage_service import PostStorageService
 from storage import InMemoryStorage
 
 logger = logging.getLogger(__name__)

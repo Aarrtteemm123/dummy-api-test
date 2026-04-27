@@ -17,7 +17,7 @@ A small **Python** sample: it calls the public **[DummyJSON](https://dummyjson.c
 |------|------|
 | `main.py` | Entry point: client, storage, service calls |
 | `clients/dummy_client.py` | `httpx` async client for `https://dummyjson.com` |
-| `services/post_service.py` | `PostLoaderService` (API → models) and `PostStorageService` (models → `Storage`) |
+| `services/` | `PostLoaderService` (API → models) and `PostStorageService` (models → `Storage`) |
 | `models/post.py`, `models/comment.py` | `Post` and `Comment` models (comment includes nested author) |
 | `storage.py` | `Storage` protocol and `InMemoryStorage` implementation |
 | `tests/` | Pytest suite (storage, models, loader/storage services, `DummyClient` with `MockTransport`) |

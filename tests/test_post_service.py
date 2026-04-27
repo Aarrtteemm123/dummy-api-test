@@ -4,7 +4,8 @@ import pytest
 
 from models.comment import Comment, CommentUser
 from models.post import Post
-from services.post_service import PostLoaderService, PostStorageService
+from services.post_loader_service import PostLoaderService
+from services.post_storage_service import PostStorageService
 from storage import InMemoryStorage
 
 BODY_ID_MISMATCH = 999
