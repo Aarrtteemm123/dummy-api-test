@@ -4,7 +4,7 @@ import httpx
 
 
 class DummyClient:
-    BASE_URL = "https://dummyjson.com"
+    base_url = "https://dummyjson.com"
 
     def __init__(
         self,
@@ -12,7 +12,7 @@ class DummyClient:
         transport: httpx.BaseTransport | None = None,
     ):
         client_config: dict[str, object] = {
-            "base_url": self.BASE_URL,
+            "base_url": self.base_url,
             "timeout": timeout,
         }
         if transport is not None:

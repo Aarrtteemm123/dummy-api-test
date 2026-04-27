@@ -5,7 +5,7 @@ from models.post import Post
 
 
 def test_post_from_data_minimal() -> None:
-    p = Post.from_data(
+    post = Post.from_data(
         {
             "id": 1,
             "title": "t",
@@ -15,7 +15,7 @@ def test_post_from_data_minimal() -> None:
             "reactions": {"ignored": True},
         }
     )
-    assert p == Post(
+    assert post == Post(
         id=1,
         title="t",
         body="b",
@@ -25,7 +25,7 @@ def test_post_from_data_minimal() -> None:
 
 
 def test_post_from_data_tags_missing_or_coerced() -> None:
-    p = Post.from_data(
+    post = Post.from_data(
         {
             "id": 1,
             "title": "",
@@ -33,8 +33,8 @@ def test_post_from_data_tags_missing_or_coerced() -> None:
             "userId": 0,
         }
     )
-    assert p.tags == []
-    p2 = Post.from_data(
+    assert post.tags == []
+    post2 = Post.from_data(
         {
             "id": 1,
             "title": "",
@@ -43,11 +43,11 @@ def test_post_from_data_tags_missing_or_coerced() -> None:
             "userId": 0,
         }
     )
-    assert p2.tags == ["1", "2"]
+    assert post2.tags == ["1", "2"]
 
 
 def test_comment_from_data() -> None:
-    c = Comment.from_data(
+    comment = Comment.from_data(
         {
             "id": 10,
             "body": "hello",
@@ -60,7 +60,7 @@ def test_comment_from_data() -> None:
             },
         }
     )
-    assert c == Comment(
+    assert comment == Comment(
         id=10,
         body="hello",
         post_id=3,
@@ -70,7 +70,7 @@ def test_comment_from_data() -> None:
 
 
 def test_comment_likes_and_fullname_defaults() -> None:
-    c = Comment.from_data(
+    comment = Comment.from_data(
         {
             "id": 1,
             "body": "b",
@@ -78,8 +78,8 @@ def test_comment_likes_and_fullname_defaults() -> None:
             "user": {"id": 1, "username": "x"},
         }
     )
-    assert c.likes == 0
-    assert c.user.fullname == ""
+    assert comment.likes == 0
+    assert comment.user.fullname == ""
 
 
 def test_post_from_data_missing_required_raises() -> None:
