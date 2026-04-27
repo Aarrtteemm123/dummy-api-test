@@ -1,3 +1,4 @@
+from types import TracebackType
 from typing import Any
 
 import httpx
@@ -9,20 +10,29 @@ class DummyClient:
     def __init__(
         self,
         timeout: float = 10.0,
-        transport: httpx.BaseTransport | None = None,
-    ):
-        client_config: dict[str, object] = {
-            "base_url": self.base_url,
-            "timeout": timeout,
-        }
-        if transport is not None:
-            client_config["transport"] = transport
-        self._client = httpx.AsyncClient(**client_config)
+        transport: httpx.AsyncBaseTransport | None = None,
+    ) -> None:
+        if transport is None:
+            self._client = httpx.AsyncClient(
+                base_url=self.base_url,
+                timeout=timeout,
+            )
+        else:
+            self._client = httpx.AsyncClient(
+                base_url=self.base_url,
+                timeout=timeout,
+                transport=transport,
+            )
 
     async def __aenter__(self) -> "DummyClient":
         return self
 
-    async def __aexit__(self, exc_type, exc, tb) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: TracebackType | None,
+    ) -> None:
         await self.close()
 
     async def get_post(self, post_id: int) -> dict[str, Any]:
@@ -33,13 +43,11 @@ class DummyClient:
     async def search_posts(self, query: str) -> list[dict[str, Any]]:
         response = await self._client.get("/posts/search", params={"q": query})
         response.raise_for_status()
-        # DummyJSON wraps results: { "posts": [...], "total", "skip", "limit" }.
         return response.json()["posts"]
 
     async def get_comments(self, post_id: int) -> list[dict[str, Any]]:
         response = await self._client.get(f"/posts/{post_id}/comments")
         response.raise_for_status()
-        # Envelope: { "comments": [...], "total", "skip", "limit" }.
         return response.json()["comments"]
 
     async def close(self) -> None:
