@@ -2,12 +2,14 @@ import pytest
 
 from storage import InMemoryStorage
 
+MISSING_KEY = 99
+
 
 def test_create_read_roundtrip() -> None:
     mem_storage = InMemoryStorage()
     mem_storage.create("items", 1, "a")
     assert mem_storage.read("items", 1) == "a"
-    assert mem_storage.read("items", 99) is None
+    assert mem_storage.read("items", MISSING_KEY) is None
 
 
 def test_create_many_single_bucket() -> None:

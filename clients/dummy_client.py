@@ -42,5 +42,5 @@ class DummyClient:
         # Envelope: { "comments": [...], "total", "skip", "limit" }.
         return response.json()["comments"]
 
-    async def close(self):
+    async def close(self) -> None:
         await self._client.aclose()

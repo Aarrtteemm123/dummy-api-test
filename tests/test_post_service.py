@@ -22,7 +22,7 @@ def client() -> AsyncMock:
 
 
 @pytest.mark.asyncio
-async def test_loader_fetch_post_does_not_write_to_storage(
+async def test_loader_no_storage_write(
     client: AsyncMock,
     storage: InMemoryStorage,
 ) -> None:

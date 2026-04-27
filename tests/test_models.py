@@ -3,6 +3,8 @@ import pytest
 from models.comment import Comment, CommentUser
 from models.post import Post
 
+EXPECTED_USER_ID = 42
+
 
 def test_post_from_data_minimal() -> None:
     post = Post.from_data(
@@ -11,7 +13,7 @@ def test_post_from_data_minimal() -> None:
             "title": "t",
             "body": "b",
             "tags": ["x", "y"],
-            "userId": 42,
+            "userId": EXPECTED_USER_ID,
             "reactions": {"ignored": True},
         }
     )
@@ -20,7 +22,7 @@ def test_post_from_data_minimal() -> None:
         title="t",
         body="b",
         tags=["x", "y"],
-        user_id=42,
+        user_id=EXPECTED_USER_ID,
     )
 
 

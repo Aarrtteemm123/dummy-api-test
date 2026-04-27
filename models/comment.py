@@ -18,17 +18,16 @@ class Comment:
     user: CommentUser
 
     @classmethod
-    def from_data(cls, data: dict[str, Any]) -> "Comment":
-        u = data["user"]
+    def from_data(cls, payload: dict[str, Any]) -> "Comment":
+        user_payload = payload["user"]
         return cls(
-            id=int(data["id"]),
-            body=str(data["body"]),
-            post_id=int(data["postId"]),
-            # API may omit likes on some payloads; default keeps the model usable.
-            likes=int(data.get("likes", 0)),
+            id=int(payload["id"]),
+            body=str(payload["body"]),
+            post_id=int(payload["postId"]),
+            likes=int(payload.get("likes", 0)),
             user=CommentUser(
-                id=int(u["id"]),
-                username=str(u["username"]),
-                fullname=str(u.get("fullName", "")),
+                id=int(user_payload["id"]),
+                username=str(user_payload["username"]),
+                fullname=str(user_payload.get("fullName", "")),
             ),
         )

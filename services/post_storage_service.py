@@ -15,19 +15,30 @@ class PostStorageService:
         self._storage = storage
 
     def save_post(self, post: Post, storage_key: int) -> None:
-        """Store a post under a given key."""
-        self._storage.create(PostStorageService.posts_collection, storage_key, post)
+        self._storage.create(
+            PostStorageService.posts_collection,
+            storage_key,
+            post,
+        )
 
     def save_posts(self, posts: Sequence[Post]) -> None:
-        """Persist many posts, keyed by each :attr:`Post.id`."""
-        self._put_by_entity_id(PostStorageService.posts_collection, list(posts))
+        self._put_by_entity_id(
+            PostStorageService.posts_collection,
+            list(posts),
+        )
 
     def save_comments(self, comments: Sequence[Comment]) -> None:
-        """Persist many comments, keyed by each :attr:`Comment.id`."""
-        self._put_by_entity_id(PostStorageService.comments_collection, list(comments))
+        self._put_by_entity_id(
+            PostStorageService.comments_collection,
+            list(comments),
+        )
 
-    def _put_by_entity_id(self, collection: str, items: list[Post] | list[Comment]) -> None:
-        if not items:
+    def _put_by_entity_id(
+        self,
+        collection: str,
+        entity_list: list[Post] | list[Comment],
+    ) -> None:
+        if not entity_list:
             return
-        pairs = [(item.id, item) for item in items]
+        pairs = [(entity.id, entity) for entity in entity_list]
         self._storage.create_many(collection, pairs)
