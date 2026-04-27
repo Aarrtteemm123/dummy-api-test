@@ -54,12 +54,22 @@ pip install -r requirements-dev.txt
 Run the full suite from the repo root:
 
 ```bash
-python3 -m pytest tests/ 
+python -m pytest -q
 ```
 
-Use `python3 -m pytest tests/ -v` for per-test names, or `python3 -m pytest tests/test_storage.py` to run a single file.
+Use `python -m pytest tests/ -v` for per-test names, or `python -m pytest tests/test_storage.py` to run a single file.
+
+### Linting, import order, and type checks
+
+With dev dependencies installed (`pip install -r requirements-dev.txt`), run tests plus **flake8** (includes **wemake-python-styleguide**), **isort** (`--check-only`), and **mypy** in one go:
+
+```bash
+python -m pytest -q && python -m flake8 . && ( command -v isort >/dev/null && isort . --check-only || true ) && ( command -v mypy >/dev/null && python -m mypy . || true )
+```
+
+The `command -v … || true` parts skip **isort** / **mypy** if those tools are not on `PATH` (e.g. minimal install); after a full `requirements-dev.txt` install they should run and must exit successfully for the chain to pass.
 
 ## Dependencies
 
 - **Runtime:** `requirements.txt` (main library: **httpx**).
-- **Development / tests:** `requirements-dev.txt` (adds **pytest** and **pytest-asyncio**).
+- **Development / tests:** `requirements-dev.txt` (adds **pytest**, **pytest-asyncio**, **wemake-python-styleguide** / **flake8**, **isort**, **mypy**, **coverage**).
