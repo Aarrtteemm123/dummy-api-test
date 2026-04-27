@@ -7,6 +7,8 @@ from models.post import Post
 from services.post_service import PostService
 from storage import InMemoryStorage
 
+BODY_ID_MISMATCH = 999
+
 
 @pytest.fixture
 def storage() -> InMemoryStorage:
@@ -19,31 +21,50 @@ def client() -> AsyncMock:
 
 
 @pytest.mark.asyncio
-async def test_fetch_and_store_post_uses_request_id_as_key(
+async def test_fetch_post_does_not_write_to_storage(
     client: AsyncMock,
     storage: InMemoryStorage,
 ) -> None:
     client.get_post = AsyncMock(
         return_value={
-            "id": 999,
+            "id": 1,
             "title": "t",
             "body": "b",
             "tags": [],
             "userId": 1,
-        }
+        },
     )
     service = PostService(client, storage)
-    post = await service.download_into_storage_by_post_id(post_id=1)
+    await service.fetch_post(1)
+    assert storage.read(PostService.posts_collection, 1) is None
+
+
+@pytest.mark.asyncio
+async def test_save_post_uses_storage_key(
+    client: AsyncMock,
+    storage: InMemoryStorage,
+) -> None:
+    client.get_post = AsyncMock(
+        return_value={
+            "id": BODY_ID_MISMATCH,
+            "title": "t",
+            "body": "b",
+            "tags": [],
+            "userId": 1,
+        },
+    )
+    service = PostService(client, storage)
+    post = await service.fetch_post(1)
+    service.save_post(post, storage_key=1)
 
     assert isinstance(post, Post)
-    assert post.id == 999
-    stored = storage.read(PostService.POSTS, 1)
-    assert stored is post
+    assert post.id == BODY_ID_MISMATCH
+    assert storage.read(PostService.posts_collection, 1) is post
     client.get_post.assert_awaited_once_with(1)
 
 
 @pytest.mark.asyncio
-async def test_search_and_store_posts(
+async def test_query_posts_then_persist(
     client: AsyncMock,
     storage: InMemoryStorage,
 ) -> None:
@@ -63,19 +84,20 @@ async def test_search_and_store_posts(
                 "tags": ["t"],
                 "userId": 2,
             },
-        ]
+        ],
     )
     service = PostService(client, storage)
-    posts = await service.download_into_storage_by_query("love")
+    posts = await service.fetch_posts_by_query("love")
+    service.save_posts(posts)
 
     assert len(posts) == 2
-    assert storage.read(PostService.POSTS, 2) is posts[0]
-    assert storage.read(PostService.POSTS, 3) is posts[1]
+    assert storage.read(PostService.posts_collection, 2) is posts[0]
+    assert storage.read(PostService.posts_collection, 3) is posts[1]
     client.search_posts.assert_awaited_once_with("love")
 
 
 @pytest.mark.asyncio
-async def test_fetch_and_store_comments(
+async def test_fetch_comments_then_persist(
     client: AsyncMock,
     storage: InMemoryStorage,
 ) -> None:
@@ -88,13 +110,14 @@ async def test_fetch_and_store_comments(
                 "likes": 1,
                 "user": {"id": 1, "username": "a", "fullName": "A"},
             },
-        ]
+        ],
     )
     service = PostService(client, storage)
-    comments = await service.download_comment_into_storage_by_post_id(2)
+    comments = await service.fetch_comments(2)
+    service.save_comments(comments)
 
     assert len(comments) == 1
     assert isinstance(comments[0], Comment)
     assert comments[0].user == CommentUser(id=1, username="a", fullname="A")
-    assert storage.read(PostService.COMMENTS, 100) is comments[0]
+    assert storage.read(PostService.comments_collection, 100) is comments[0]
     client.get_comments.assert_awaited_once_with(2)

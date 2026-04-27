@@ -4,12 +4,12 @@ A small **Python** sample: it calls the public **[DummyJSON](https://dummyjson.c
 
 ## What it does
 
-1. Fetches post `id=1` and saves it under the `posts` collection.
-2. Searches posts for the query `"love"` and saves all matches to the same collection.
-3. Loads comments for post `id=2` and saves them under the `comments` collection.
-4. Prints both collections to the console.
+1. Loads post `1` from the API (`fetch_post`), then stores it with key `1` (`save_post`).
+2. Searches the API for `"love"` (`fetch_posts_by_query`), then stores all results (`save_posts`).
+3. Loads comments for post `2` (`fetch_comments`), then stores them (`save_comments`).
+4. Logs both collections to the console via `logging` (not raw `print` in the current `main.py`).
 
-`main.py` handles HTTP and network failures (`httpx.HTTPStatusError`, `httpx.RequestError`); anything else is caught by a broad `except Exception`.
+`main.py` composes the separate fetch and save calls above. It handles HTTP and network failures (`httpx.HTTPStatusError`, `httpx.RequestError`); a broad `except Exception` covers other cases.
 
 ## Project layout
 
@@ -17,7 +17,7 @@ A small **Python** sample: it calls the public **[DummyJSON](https://dummyjson.c
 |------|------|
 | `main.py` | Entry point: client, storage, service calls |
 | `clients/dummy_client.py` | `httpx` async client for `https://dummyjson.com` |
-| `services/post_service.py` | Workflows: fetch → parse → persist via `Storage` |
+| `services/post_service.py` | Composable API: fetch/load from API vs. save to `Storage` (e.g. `fetch_post` + `save_post`) |
 | `models/post.py`, `models/comment.py` | `Post` and `Comment` models (comment includes nested author) |
 | `storage.py` | `Storage` protocol and `InMemoryStorage` implementation |
 | `tests/` | Pytest suite (storage, models, `PostService`, `DummyClient` with `MockTransport`) |
