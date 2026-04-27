@@ -12,7 +12,8 @@ from tests.httpx_responders import (
 
 
 def transport_get_post(
-    path_suffix: str, body: dict[str, Any],
+    path_suffix: str,
+    body: dict[str, Any],
 ) -> httpx.MockTransport:
     return httpx.MockTransport(
         partial(

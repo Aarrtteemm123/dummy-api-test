@@ -11,7 +11,7 @@ from storage import InMemoryStorage
 logger = logging.getLogger(__name__)
 
 
-async def main() -> None:
+async def main() -> None:  # noqa: WPS210
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     try:
         # Context manager ensures the underlying httpx client is closed even on errors.

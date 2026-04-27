@@ -10,9 +10,7 @@ class InMemoryStorage:
         self._db.setdefault(collection, {})
         self._db[collection][key] = record
 
-    def create_many(
-        self, collection: str, pairs: Iterable[tuple[Any, Any]]
-    ) -> None:
+    def create_many(self, collection: str, pairs: Iterable[tuple[Any, Any]]) -> None:
         bucket = self._db.setdefault(collection, {})
         for key, record in pairs:
             bucket[key] = record
