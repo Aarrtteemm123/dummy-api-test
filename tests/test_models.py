@@ -20,7 +20,7 @@ def test_post_from_data_minimal() -> None:
         title="t",
         body="b",
         tags=["x", "y"],
-        userId=42,
+        user_id=42,
     )
 
 
@@ -63,9 +63,9 @@ def test_comment_from_data() -> None:
     assert c == Comment(
         id=10,
         body="hello",
-        postId=3,
+        post_id=3,
         likes=5,
-        user=CommentUser(id=7, username="u", fullName="Full"),
+        user=CommentUser(id=7, username="u", fullname="Full"),
     )
 
 
@@ -79,7 +79,7 @@ def test_comment_likes_and_fullname_defaults() -> None:
         }
     )
     assert c.likes == 0
-    assert c.user.fullName == ""
+    assert c.user.fullname == ""
 
 
 def test_post_from_data_missing_required_raises() -> None:

@@ -33,7 +33,7 @@ async def test_fetch_and_store_post_uses_request_id_as_key(
         }
     )
     service = PostService(client, storage)
-    post = await service.fetch_and_store_post(post_id=1)
+    post = await service.download_into_storage_by_post_id(post_id=1)
 
     assert isinstance(post, Post)
     assert post.id == 999
@@ -66,7 +66,7 @@ async def test_search_and_store_posts(
         ]
     )
     service = PostService(client, storage)
-    posts = await service.search_and_store_posts("love")
+    posts = await service.download_into_storage_by_query("love")
 
     assert len(posts) == 2
     assert storage.read(PostService.POSTS, 2) is posts[0]
@@ -91,10 +91,10 @@ async def test_fetch_and_store_comments(
         ]
     )
     service = PostService(client, storage)
-    comments = await service.fetch_and_store_comments(2)
+    comments = await service.download_comment_into_storage_by_post_id(2)
 
     assert len(comments) == 1
     assert isinstance(comments[0], Comment)
-    assert comments[0].user == CommentUser(id=1, username="a", fullName="A")
+    assert comments[0].user == CommentUser(id=1, username="a", fullname="A")
     assert storage.read(PostService.COMMENTS, 100) is comments[0]
     client.get_comments.assert_awaited_once_with(2)

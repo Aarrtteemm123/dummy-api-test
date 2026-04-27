@@ -4,12 +4,11 @@ from typing import Any
 
 @dataclass(slots=True)
 class Post:
-    # Field names mirror DummyJSON (camelCase userId); extra keys in JSON are ignored.
     id: int
     title: str
     body: str
     tags: list[str]
-    userId: int
+    user_id: int
 
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> "Post":
@@ -21,5 +20,5 @@ class Post:
             title=str(data["title"]),
             body=str(data["body"]),
             tags=tags,
-            userId=int(data["userId"]),
+            user_id=int(data["userId"]),
         )

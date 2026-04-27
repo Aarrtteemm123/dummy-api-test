@@ -11,13 +11,13 @@ class DummyClient:
         timeout: float = 10.0,
         transport: httpx.BaseTransport | None = None,
     ):
-        client_kw: dict[str, object] = {
+        client_config: dict[str, object] = {
             "base_url": self.BASE_URL,
             "timeout": timeout,
         }
         if transport is not None:
-            client_kw["transport"] = transport
-        self._client = httpx.AsyncClient(**client_kw)
+            client_config["transport"] = transport
+        self._client = httpx.AsyncClient(**client_config)
 
     async def __aenter__(self) -> "DummyClient":
         return self
@@ -26,21 +26,21 @@ class DummyClient:
         await self.close()
 
     async def get_post(self, post_id: int) -> dict[str, Any]:
-        r = await self._client.get(f"/posts/{post_id}")
-        r.raise_for_status()
-        return r.json()
+        response = await self._client.get(f"/posts/{post_id}")
+        response.raise_for_status()
+        return response.json()
 
     async def search_posts(self, query: str) -> list[dict[str, Any]]:
-        r = await self._client.get("/posts/search", params={"q": query})
-        r.raise_for_status()
+        response = await self._client.get("/posts/search", params={"q": query})
+        response.raise_for_status()
         # DummyJSON wraps results: { "posts": [...], "total", "skip", "limit" }.
-        return r.json()["posts"]
+        return response.json()["posts"]
 
     async def get_comments(self, post_id: int) -> list[dict[str, Any]]:
-        r = await self._client.get(f"/posts/{post_id}/comments")
-        r.raise_for_status()
+        response = await self._client.get(f"/posts/{post_id}/comments")
+        response.raise_for_status()
         # Envelope: { "comments": [...], "total", "skip", "limit" }.
-        return r.json()["comments"]
+        return response.json()["comments"]
 
     async def close(self):
         await self._client.aclose()

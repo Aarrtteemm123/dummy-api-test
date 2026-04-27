@@ -12,14 +12,14 @@ class PostService:
         self._client = client
         self._storage = storage
 
-    async def fetch_and_store_post(self, post_id: int) -> Post:
+    async def download_into_storage_by_post_id(self, post_id: int) -> Post:
         raw = await self._client.get_post(post_id)
         post = Post.from_data(raw)
         # Key is the requested id so storage matches the API contract even if the body differs.
         self._storage.create(PostService.POSTS, post_id, post)
         return post
 
-    async def search_and_store_posts(self, query: str) -> list[Post]:
+    async def download_into_storage_by_query(self, query: str) -> list[Post]:
         raw_posts = await self._client.search_posts(query)
         posts: list[Post] = []
         pairs: list[tuple[int, Post]] = []
@@ -31,7 +31,7 @@ class PostService:
         self._storage.create_many(PostService.POSTS, pairs)
         return posts
 
-    async def fetch_and_store_comments(self, post_id: int) -> list[Comment]:
+    async def download_comment_into_storage_by_post_id(self, post_id: int) -> list[Comment]:
         raw_comments = await self._client.get_comments(post_id)
         comments: list[Comment] = []
         pairs: list[tuple[int, Comment]] = []

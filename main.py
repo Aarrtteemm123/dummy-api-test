@@ -15,9 +15,9 @@ async def main() -> None:
             storage = InMemoryStorage()
             service = PostService(client, storage)
 
-            await service.fetch_and_store_post(1)
-            await service.search_and_store_posts("love")
-            await service.fetch_and_store_comments(2)
+            await service.download_into_storage_by_post_id(1)
+            await service.download_into_storage_by_query("love")
+            await service.download_comment_into_storage_by_post_id(2)
             print("Stored posts:", storage.list_collection("posts"))
             print("Stored comments:", storage.list_collection("comments"))
     # 4xx/5xx after raise_for_status() on the client.

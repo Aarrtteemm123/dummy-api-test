@@ -6,14 +6,14 @@ from typing import Any
 class CommentUser:
     id: int
     username: str
-    fullName: str
+    fullname: str
 
 
 @dataclass(slots=True)
 class Comment:
     id: int
     body: str
-    postId: int
+    post_id: int
     likes: int
     user: CommentUser
 
@@ -23,12 +23,12 @@ class Comment:
         return cls(
             id=int(data["id"]),
             body=str(data["body"]),
-            postId=int(data["postId"]),
+            post_id=int(data["postId"]),
             # API may omit likes on some payloads; default keeps the model usable.
             likes=int(data.get("likes", 0)),
             user=CommentUser(
                 id=int(u["id"]),
                 username=str(u["username"]),
-                fullName=str(u.get("fullName", "")),
+                fullname=str(u.get("fullName", "")),
             ),
         )
