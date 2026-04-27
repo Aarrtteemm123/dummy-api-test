@@ -4,7 +4,7 @@ import logging
 import httpx
 
 from clients.dummy_client import DummyClient
-from services.post_service import PostService
+from services.post_service import PostLoaderService, PostStorageService
 from storage import InMemoryStorage
 
 logger = logging.getLogger(__name__)
@@ -16,16 +16,17 @@ async def main() -> None:
         # Context manager ensures the underlying httpx client is closed even on errors.
         async with DummyClient() as client:
             storage = InMemoryStorage()
-            service = PostService(client, storage)
+            loader = PostLoaderService(client)
+            post_storage = PostStorageService(storage)
 
-            post = await service.fetch_post(1)
-            service.save_post(post, storage_key=1)
+            post = await loader.fetch_post(1)
+            post_storage.save_post(post, storage_key=1)
 
-            posts = await service.fetch_posts_by_query("love")
-            service.save_posts(posts)
+            posts = await loader.fetch_posts_by_query("love")
+            post_storage.save_posts(posts)
 
-            comments = await service.fetch_comments(2)
-            service.save_comments(comments)
+            comments = await loader.fetch_comments(2)
+            post_storage.save_comments(comments)
 
             logger.info("Stored posts: %s", storage.list_collection("posts"))
             logger.info("Stored comments: %s", storage.list_collection("comments"))

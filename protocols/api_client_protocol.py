@@ -1,7 +1,6 @@
 from typing import Any, Protocol
 
 
-# PostService depends on this interface, not on DummyClient specifically (easier to test/swap).
 class ApiClientProtocol(Protocol):
     async def get_post(self, post_id: int) -> dict[str, Any]: ...
 
